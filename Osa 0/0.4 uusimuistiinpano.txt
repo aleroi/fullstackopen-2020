@@ -1,0 +1,31 @@
+Note over Selain:
+Käyttäjä syöttää muistiinpanon ja
+painaa "save" -painiketta.
+end note 
+
+Selain->Palvelin: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note
+
+Note over Palvelin:
+Palvelin tallentaa muistiinpanon.
+end note
+
+Palvelin->Selain: 302 redirect /notes
+Selain -> Palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/notes
+Palvelin --> Selain: HTML-Koodi
+Selain -> Palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.css
+Palvelin --> Selain: main.css
+Selain -> Palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/main.js
+Palvelin --> Selain: main.js
+
+note over Selain:
+selain alkaa suorittaa js-koodia
+joka pyytää JSON-datan palvelimelta
+end note
+
+Selain -> Palvelin: HTTP GET https://fullstack-exampleapp.herokuapp.com/data.json
+Palvelin-->Selain: muistiinpanot data.json
+
+note over Selain:
+selain suorittaa tapahtumankäsittelijän
+joka renderöi muistiinpanot näytölle
+end note

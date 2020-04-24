@@ -1,0 +1,20 @@
+
+Note over Selain:
+Käyttäjä syöttää muistiinpanon ja
+painaa "save" -painiketta.
+end note 
+
+note over Selain:
+Selain lisää muistiinpanon
+ja lähettää muistiinpanon palvelimelle.
+end note
+
+Selain->Palvelin: selain->palvelin: HTTP POST https://fullstack-exampleapp.herokuapp.com/new_note_spa
+
+
+note over Palvelin:
+Palvelin vastaanottaa ja tallentaa muistiinpanon
+sekä vastaa selaimelle, että muistiinpano on tallennettu
+end note
+
+Palvelin --> Selain: HTTP 201
