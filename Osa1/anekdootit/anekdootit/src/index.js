@@ -25,7 +25,8 @@ const App = (props) => {
             <p>has {max} votes</p>
         </div>
     )
-}
+    }
+    
 
 const anecdotes = [
   'If it hurts, do it more often',
