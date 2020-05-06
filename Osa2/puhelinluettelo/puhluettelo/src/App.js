@@ -8,6 +8,28 @@ import personService from './services/persons'
 const nameExists = (persons, name) => {
   return persons.filter(person => person.name ===name).length > 0
 }
+const Notification = ({ message }) => {
+
+  if (message === null) {
+    return null
+  }
+
+  const notificationStyle = {
+    "color": message.isError ? "red" : "green",
+    "background": "lightgrey",
+    "fontSize": "20px",
+    "borderStyle": "solid",
+    "borderRadius": "5px",
+    "padding": "10px",
+    "marginBottom": "10px"
+  }
+
+  return (
+    <div style={notificationStyle}>
+      {message.content}
+    </div>
+  )
+}
 
 const App = () => {
 
@@ -15,6 +37,10 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filter, setFilter] = useState('')
+  const [message, setMessage] = useState(null)
+
+  const content = message === null ? null : message.content
+  const isError = message === null ? null : message.isError
 
 
   useEffect(() => {
@@ -24,6 +50,13 @@ const App = () => {
         setPersons(allPersons)
         )
     }, [])
+
+    useEffect(() => {
+      const clearMessage = () => setMessage(null)
+      const timer = setTimeout(clearMessage, 5000)
+  
+      return () => clearInterval(timer)
+    }, [content, isError])
 
   const handleNameChange = (event) => setNewName(event.target.value)
   const handleNumberChange = (event) => setNewNumber(event.target.value)
@@ -35,17 +68,18 @@ const App = () => {
 
     personService
       .update(updatePerson.id, updatePerson)
-      .then(returnedPerson =>
+      .then(returnedPerson => {
         setPersons(
           persons.map(
             person =>
               person.id !== oldPerson.id ? person: returnedPerson
             )
           )
-        )
+        setMessage({content:`Updated ${updatePerson.name}.`, isError: false})
+          })
         setNewName('')
         setNewNumber('')
-  }
+      }
 
   const handleCreateNewPerson = () => {
     const newPerson = {
@@ -54,9 +88,10 @@ const App = () => {
     }
     personService
       .create(newPerson)
-      .then(newPerson =>
+      .then(newPerson => {
         setPersons(persons.concat(newPerson))
-        )
+        setMessage({content: `Created ${newPerson.name}.`, isError: false})
+      })
     setNewName('')
     setNewNumber('')
   }
@@ -76,15 +111,23 @@ const App = () => {
     if(window.confirm(`Delete ${deletePerson.name}?`)) {
       personService
       .remove(deletePerson.id)
-      .then(setPersons(persons.filter(person =>person.id !== deletePerson.id))
-      )
+      .then(() => {
+        setPersons(persons.filter(person => person.id !== deletePerson.id))
+        setMessage({content:`Deleted ${deletePerson.name}.`, isError: false})
+          })
+          .catch(error =>  {
+            setMessage({content: `Information of ${deletePerson.name} has already removed from server`, isError: true})
+          })
+        setNewName('')
+        setNewNumber('')
+      }
     }
-  }
 
 
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message}/>
       <Filter filter={filter} onFilterChange={handleFilterChange}/>
       <h2>add a new</h2>
       <PersonForm
@@ -98,6 +141,6 @@ const App = () => {
       <Persons persons={persons} filter={filter} onDelete={handleDelete}/>
     </div>
   )
-}
+  }
 
 export default App
