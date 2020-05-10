@@ -11,8 +11,10 @@
   "author": "Aleksi Roitto",
   "license": "MIT",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "heroku": "^7.40.0",
+    "mongoose": "^5.9.13",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
