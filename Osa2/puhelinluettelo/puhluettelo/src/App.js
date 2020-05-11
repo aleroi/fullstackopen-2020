@@ -92,6 +92,9 @@ const App = () => {
         setPersons(persons.concat(newPerson))
         setMessage({content: `Created ${newPerson.name}.`, isError: false})
       })
+      .catch(error => {
+        setMessage({content: error.response.data.error, isError: true})
+      })
     setNewName('')
     setNewNumber('')
   }

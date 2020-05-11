@@ -83,10 +83,6 @@ app.post('/api/persons', (request, response) => {
         return response.status(400).json({
             error: 'name or number missing'
         })
-    } else if (persons.find(person => person.name === body.name)) {
-        return response.status(400).json({
-            error: ' name must be unique'
-        })
     }
     const person = new Person ({
         name : body.name,
@@ -96,6 +92,7 @@ app.post('/api/persons', (request, response) => {
     person.save().then(savedPerson => {
         response.json(savedPerson.toJSON())
     })
+    .catch(error => next(error))
 })
 app.put("/api/persons/:id", (request, response, next) => {
     const body = request.body
