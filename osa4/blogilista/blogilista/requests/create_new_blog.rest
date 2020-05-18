@@ -1,0 +1,11 @@
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI1ZWMyNDAzNzJkMGI0NDI5NjQ0NTRiOTEiLCJpYXQiOjE1ODk4MDEwNDJ9.GsoDuY-9QszWtaeesR78FyBCOF4wOtfikbpcMPIKsi8
+
+{
+    "title": "Blogi bloginen osa2",
+    "author": "Aleksi Roitto",
+    "url": "www.bloginen.fi/osa2",
+    "likes": 5,
+    "user:": "5ec240372d0b442964454b91"
+}
