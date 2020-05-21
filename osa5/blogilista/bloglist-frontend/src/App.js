@@ -55,6 +55,10 @@ const App = () => {
     )
   }, [])
 
+  const handleLike = (newBlog) => {
+    setBlogs(blogs.map(b => b.id === newBlog.id ? newBlog : b))
+  }
+
   // Use effect hook once again to avoid memory leaks
   useEffect(() => {
     const clearNotification = () => setNotification(null)
@@ -87,7 +91,7 @@ const App = () => {
       {blogs
       .sort((a, b) => b.likes - a.likes)
       .map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} onLike={handleLike} />
       )}
     </div>
   )
