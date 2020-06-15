@@ -39,12 +39,24 @@ test('renders also url & likes', () => {
 })
 
 test('clicking the like button twice calls event handler twice', async () => {
+    
+    const blog = {
+        author: 'Aleksi Roitto',
+        title: 'Aleksi testiblogi',
+        url: 'hs.fi',
+        likes: 10,
+        user: {
+            name: 'Matti Luukkainen',
+            username: 'mluukkai' 
+        }
+    }
 
     const mockHandler = jest.fn()
     const component = render(
         <Blog blog={blog} onClick={mockHandler}/>
     )
-    
+    const viewButton = component.getByText('view')
+    fireEvent.click(viewButton)
     const likeButton = component.getByText('like')
     fireEvent.click(likeButton)
     fireEvent.click(likeButton)
