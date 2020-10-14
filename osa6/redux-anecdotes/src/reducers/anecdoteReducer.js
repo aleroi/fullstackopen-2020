@@ -1,13 +1,4 @@
 
-const asObject = (anecdote) => {
-  return {
-    content: anecdote,
-    votes: 0
-  }
-}
-
-
-
 export const voteAnecdote = id => {
   return {
     type: 'VOTE',
@@ -15,10 +6,10 @@ export const voteAnecdote = id => {
   }
 }
 
-export const addAnecdote = (content) => {
+export const addAnecdote = (anecdote) => {
   return {
     type: 'ADD',
-    data: asObject(content)
+    data: anecdote
   }
 }
 

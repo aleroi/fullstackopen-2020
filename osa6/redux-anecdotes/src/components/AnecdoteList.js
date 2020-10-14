@@ -13,7 +13,7 @@ const AnecdoteList = () => {
     dispatch(setNotification(`you voted ${anecdote.content}`))
     setTimeout(() => dispatch(clearNotification()), 5000);
   }
-
+  console.log(anecdotes)
   return (
     <div>
       {anecdotes.map(anecdote =>

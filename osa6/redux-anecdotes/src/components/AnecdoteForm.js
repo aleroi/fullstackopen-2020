@@ -4,7 +4,7 @@ import { addAnecdote } from '../reducers/anecdoteReducer'
 import { setNotification, clearNotification } from '../reducers/notificationReducer'
 import anecdoteService from '../services/anecdotes'
 
-const AnecdoteForm = () => {
+const AnecdoteForm = props => {
 
   const dispatch = useDispatch()
 
