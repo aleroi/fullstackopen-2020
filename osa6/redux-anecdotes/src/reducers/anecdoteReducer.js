@@ -15,10 +15,10 @@ export const voteAnecdote = id => {
 
 export const addAnecdote = content => {
   return async dispatch => {
-    const anecdote = await anecdoteService.createNew(content)
+    const anecdote = await anecdoteService.createNew({content, votes: 0})
     dispatch({
       type: 'ADD',
-      data: anecdote
+      data: { anecdote }
     })
   }
 }
@@ -36,7 +36,7 @@ const reducer = (state = [], action) => {
 
         
     case 'ADD':
-      return state.concat(action.data)
+      return state.concat(action.data.anecdote)
     case 'INIT_ANECDOTES':
         return action.data
     default:
