@@ -1,8 +1,12 @@
 import React, { useState } from 'react'
 import blogService from '../services/blogs'
+import { setNotification } from '../reducers/notificationReducer'
+import { useDispatch, useSelector } from 'react-redux'
 
 
-const NewBlogForm = ({ onBlogCreated, setNotification }) => {
+const NewBlogForm = ({ onBlogCreated }) => {
+
+  const dispatch = useDispatch()
 
     const [title, setTitle] = useState('')
     const [author, setAuthor] = useState('')
@@ -17,9 +21,9 @@ const NewBlogForm = ({ onBlogCreated, setNotification }) => {
         setAuthor('')
         setUrl('')
         onBlogCreated(blog)
-        setNotification('Blog added!')
+        dispatch(setNotification('Blog added!'))
       } catch (error) {
-        setNotification('Something went wrong, blog was not added')
+        dispatch(setNotification('Something went wrong, blog was not added'))
       }
     }
   

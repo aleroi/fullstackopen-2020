@@ -1,7 +1,12 @@
 import React, { useState } from 'react'
 import loginService from '../services/login'
+import { useDispatch } from 'react-redux'
+import { setNotification } from '../reducers/notificationReducer'
+import { login } from '../reducers/userReducer'
 
-const LoginForm = ({ onUserLoggedIn, setNotification }) => {
+const LoginForm = () => {
+
+  const dispatch = useDispatch()
 
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
@@ -15,20 +20,10 @@ const LoginForm = ({ onUserLoggedIn, setNotification }) => {
           password
         }
   
-      try {
-        const user = await loginService.login(credentials)
-        setUsername('')
-        setPassword('')
-        onUserLoggedIn(user)
-        setNotification(`Hi ${user.name}!`)
+      dispatch(login(credentials))
+      setUsername('')
+      setPassword('')
   
-      } catch (error) {
-        if (error.message === 'Request failed with status code 401') {
-          setNotification('Invalid credentials')
-       } else {
-         setNotification('Could not log in')
-       }
-      }
     }
   
     return (

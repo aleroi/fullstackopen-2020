@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
-import blogService from '../services/blogs'
 
-const Blog = ({blog, onLike}) => {
+
+
+const Blog = ({blog, onLike, onDeleted}) => {
   const [detailed, setDetailed] = useState(false)
  
 
@@ -16,13 +17,7 @@ const Blog = ({blog, onLike}) => {
     marginBottom: 5
   }
 
-  const like = async event => {
-    event.preventDefault()
-    const likes = blog.likes + 1
-    const newBlog = { ...blog, likes }
-    await blogService.update(blog.id, newBlog)
-    onLike(newBlog)
-  }
+
   
   return (
     <div style={blogStyle}>
@@ -34,7 +29,8 @@ const Blog = ({blog, onLike}) => {
       </div>
       <div style={allDetails} className="allDetails">
         <div>{blog.url}</div>
-        <div onClick={like}>{blog.likes} likes<button type="submit">like</button></div>
+        <div> {blog.likes} likes <button onClick={() => onLike(blog)}>like</button></div>
+        <div><button onClick={() => onDeleted(blog)}>remove</button></div>
       </div>
     </div>
     

@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
-import blogService from './services/blogs'
 //import loginService from './services/login'//
 import Togglable from './components/Togglable'
 import NewBlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
+import { setNotification } from './reducers/notificationReducer'
+import { createBlog, deleteBlog, likeBlog, initializeBlogs } from './reducers/blogsReducer'
+import { tryLoginByToken, logout } from './reducers/userReducer'
+import { useDispatch, useSelector } from 'react-redux'
 
-const BLOG_USER_KEY = 'blogUser'
-
+import {
+  BrowserRouter as Router,
+  Switch, Route, Link, Redirect, useRouteMatch,
+} from "react-router-dom"
 
 
 const Notification = ({notification}) => {
@@ -15,48 +20,50 @@ const Notification = ({notification}) => {
     notification !== null &&
     <p style={ {backgroundColor: 'grey'} }><b>{notification}</b></p>
   )
-  }
+}
+
+
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
-  const [user, setUser] = useState(null)
-  const [notification, setNotification] = useState(null)
+
+  const dispatch = useDispatch()
+  const blogs = useSelector(state => state.blogs)
+  const users = useSelector(state => state.user)
+  const notification = useSelector(state => state.notification.text)
 
   const createBlogRef = React.createRef()
 
-  const login = user => {
-    window.localStorage.setItem(BLOG_USER_KEY, JSON.stringify(user))
-    blogService.setToken(user.token)
-    setUser(user)
-  }
+  useEffect(() => {
+    dispatch(tryLoginByToken())
+  }, [dispatch])
 
   const handleLogout = () => {
-    window.localStorage.removeItem(BLOG_USER_KEY)
-    setUser(null)
+    dispatch(logout())
   }
 
   const handleBlogCreated = async (blog) => {
     createBlogRef.current.toggleVisibility()
-    setBlogs(blogs.concat(blog))
+    try {
+      dispatch(createBlog(blog))
+      dispatch(setNotification('Blog added succesfully!'))
+    } catch (error) {
+      dispatch(setNotification('Something went wrong'))
+    }
   }
 
+
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem(BLOG_USER_KEY)
-    if (loggedUserJSON) {
-      const user = JSON.parse(loggedUserJSON)
-      login(user)
+    dispatch(initializeBlogs())
+  }, [dispatch])
+
+  const handleLike = (blog) => {
+    dispatch(likeBlog(blog))
+  }
+
+  const handleBlogDeleted = async (blog) => {
+    if (window.confirm(`Removing blog ${blog.title} by ${blog.author}`)) {
+      dispatch(deleteBlog(blog))
     }
-
-  }, [])
-
-  useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )
-  }, [])
-
-  const handleLike = (newBlog) => {
-    setBlogs(blogs.map(b => b.id === newBlog.id ? newBlog : b))
   }
 
   // Use effect hook once again to avoid memory leaks
@@ -67,23 +74,58 @@ const App = () => {
     return () => clearInterval(timer)
   }, [notification])
 
+  const padding = {
+    padding: 5
+  }
+
+
 
   return (
+    <Router>
+      <div>
+        <Link style={padding} to="/">blogs</Link>
+        <Link style={padding} to="/users">users</Link>
+        {users
+          ? <em>{users.name} logged in</em>
+          : <Link style={padding} to="/login">login</Link>
+        }
+      </div>
+    <Switch>
+    <Route path="/users">
+      
+    </Route>
+    
+    <Route path="/login">
+    <Notification notification={notification}/>
+      {
+        users === null &&
+      <LoginForm/>
+      }
+      {
+        users !== null &&
+        <>
+          <p>{users.name} logged in <button onClick={handleLogout}>logout</button></p>
+        </>
+      }
+        
+    </Route>
+
+    <Route path="/">
     <div>
-      <h2>blogs</h2>
+      <h2>blog app</h2>
       <Notification notification={notification}/>
       {
-        user === null &&
+        users === null &&
         <Togglable buttonLabel='login'>
-          <LoginForm onUserLoggedIn={login} setNotification={setNotification}/>
+          <LoginForm/>
         </Togglable>
       }
       {
-        user !== null &&
+        users !== null &&
         <>
-          <p>{user.name} logged in <button onClick={handleLogout}>logout</button></p>
+          <p>{users.name} logged in <button onClick={handleLogout}>logout</button></p>
           <Togglable buttonLabel='add new blog' ref={createBlogRef}>
-            <NewBlogForm onBlogCreated={handleBlogCreated} setNotification={setNotification}></NewBlogForm>
+            <NewBlogForm onBlogCreated={handleBlogCreated}></NewBlogForm>
           </Togglable>
         </>
       }
@@ -91,9 +133,12 @@ const App = () => {
       {blogs
       .sort((a, b) => b.likes - a.likes)
       .map(blog =>
-        <Blog key={blog.id} blog={blog} onLike={handleLike} />
+        <Blog key={blog.id} blog={blog} onLike={handleLike} onDeleted={handleBlogDeleted} />
       )}
     </div>
+    </Route>
+    </Switch>
+    </Router>
   )
 }
 
